@@ -1,13 +1,23 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserProps, User } from './user.entity';
+import { USERS_REPOSITORY } from './users.repository';
+import type { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  private readonly users = new Map<string, User>();
+  constructor(
+    @Inject(USERS_REPOSITORY)
+    private readonly usersRepository: UsersRepository,
+  ) {}
 
   create(input: Omit<CreateUserProps, 'id'> & { id: string }): User {
     const normalizedEmail = input.email.trim().toLowerCase();
-    const existingUser = this.findByEmail(normalizedEmail);
+    const existingUser = this.usersRepository.findByEmail(normalizedEmail);
 
     if (existingUser) {
       throw new ConflictException('Email is already registered.');
@@ -18,12 +28,11 @@ export class UsersService {
       email: normalizedEmail,
     });
 
-    this.users.set(user.id, user);
-    return user;
+    return this.usersRepository.save(user);
   }
 
   findById(id: string): User {
-    const user = this.users.get(id);
+    const user = this.usersRepository.findById(id);
 
     if (!user) {
       throw new NotFoundException('User not found.');
@@ -33,21 +42,12 @@ export class UsersService {
   }
 
   findByEmail(email: string): User | null {
-    const normalizedEmail = email.trim().toLowerCase();
-
-    for (const user of this.users.values()) {
-      if (user.email === normalizedEmail) {
-        return user;
-      }
-    }
-
-    return null;
+    return this.usersRepository.findByEmail(email);
   }
 
   updateProfile(id: string, updates: { name?: string }): User {
     const currentUser = this.findById(id);
     const updatedUser = currentUser.updateProfile(updates);
-    this.users.set(updatedUser.id, updatedUser);
-    return updatedUser;
+    return this.usersRepository.save(updatedUser);
   }
 }

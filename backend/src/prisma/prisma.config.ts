@@ -1,10 +1,6 @@
-import { config } from 'dotenv';
 import { defineConfig } from 'prisma/config';
-
-config({ path: ['.env', '../.env'] });
-
-const databaseUrl =
-  process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@localhost:5432/qplan';
+import '../config/env.loader';
+import { getPrismaDatabaseUrl } from '../config/app.config';
 
 export default defineConfig({
   schema: './prisma/schema.prisma',
@@ -12,6 +8,6 @@ export default defineConfig({
     path: './prisma/migrations',
   },
   datasource: {
-    url: databaseUrl,
+    url: getPrismaDatabaseUrl(),
   },
 });
