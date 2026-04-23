@@ -5,3 +5,5 @@ logs/
 *.log
 dist/
 build/
+
+backend/src/generated/prisma/
