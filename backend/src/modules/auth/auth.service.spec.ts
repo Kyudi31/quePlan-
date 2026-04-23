@@ -1,6 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
-import { AUTH_PRISMA, AuthService } from './auth.service';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -10,12 +11,10 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         {
-          provide: AUTH_PRISMA,
+          provide: UsersService,
           useValue: {
-            user: {
-              create: jest.fn(),
-              findUnique: jest.fn(),
-            },
+            create: jest.fn(),
+            findByEmail: jest.fn(),
           },
         },
         {

@@ -11,8 +11,8 @@ export class RegisterAuthDto {
   email: string;
 
   @IsString()
-  @MinLength(4)
-  @MaxLength(12)
+  @MinLength(6)
+  @MaxLength(72)
   password: string;
 
   @IsString()
