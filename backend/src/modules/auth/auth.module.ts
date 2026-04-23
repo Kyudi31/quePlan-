@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { AUTH_PRISMA, AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
-import { PrismaService } from '../../prisma/prisma.service';
+import { AuthController } from './auth.controller';
+import { AUTH_PRISMA, AuthService } from './auth.service';
 
 @Module({
   imports: [
@@ -14,10 +13,9 @@ import { PrismaService } from '../../prisma/prisma.service';
   controllers: [AuthController],
   providers: [
     AuthService,
-    PrismaService,
     {
       provide: AUTH_PRISMA,
-      useExisting: PrismaService,
+      useValue: null,
     },
   ],
 })
