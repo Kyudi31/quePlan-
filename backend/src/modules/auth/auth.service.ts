@@ -1,12 +1,24 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/prisma/prisma.service';
+
+export const AUTH_PRISMA = 'AUTH_PRISMA';
+
+type AuthPrismaClient = {
+  user: {
+    create: (args: {
+      data: { email: string; password: string };
+    }) => Promise<{ id: string }>;
+    findUnique: (args: {
+      where: { email: string };
+    }) => Promise<{ id: string; email: string; password: string } | null>;
+  };
+};
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
+    @Inject(AUTH_PRISMA) private readonly prisma: AuthPrismaClient,
     private jwtService: JwtService,
   ) {}
 

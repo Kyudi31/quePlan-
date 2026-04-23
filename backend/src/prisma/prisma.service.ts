@@ -9,7 +9,9 @@ export class PrismaService
 {
   constructor() {
     const adapter = new PrismaPg({
-      connectionString: process.env.DATABASE_URL,
+      connectionString:
+        process.env.DATABASE_URL ??
+        'postgresql://postgres:postgres@localhost:5432/qplan',
     });
 
     super({ adapter });
