@@ -6,11 +6,11 @@ import { UsersRepository } from '../users.repository';
 export class InMemoryUsersRepository implements UsersRepository {
   private readonly users = new Map<string, User>();
 
-  findById(id: string): User | null {
+  async findById(id: string): Promise<User | null> {
     return this.users.get(id) ?? null;
   }
 
-  findByEmail(email: string): User | null {
+  async findByEmail(email: string): Promise<User | null> {
     const normalizedEmail = email.trim().toLowerCase();
 
     for (const user of this.users.values()) {
@@ -22,7 +22,7 @@ export class InMemoryUsersRepository implements UsersRepository {
     return null;
   }
 
-  save(user: User): User {
+  async save(user: User): Promise<User> {
     this.users.set(user.id, user);
     return user;
   }
