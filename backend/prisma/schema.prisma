@@ -14,3 +14,41 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+enum TransportType {
+  WALKING
+  PUBLIC
+  CAR
+  BICYCLE
+  MIXED
+}
+
+enum PlanStatus {
+  DRAFT
+  FUTURE
+  PAST
+}
+
+model Plan {
+  id             String        @id @default(cuid())
+  userId         String
+  name           String
+  numberOfPeople Int
+  budget         Decimal       @db.Decimal(10, 2)
+  transport      TransportType
+  scheduledAt    DateTime
+  status         PlanStatus    @default(DRAFT)
+  subplans       Subplan[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model Subplan {
+  id        String  @id @default(cuid())
+  planId    String
+  plan      Plan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+  placeName String
+  placeId   String?
+  order     Int
+  notes     String?
+}
