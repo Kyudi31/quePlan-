@@ -1,16 +1,105 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider   = "prisma-client-js"
+  engineType = "binary" // fuerza engine de Node
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum PlanStatus {
+  DRAFT
+  OPEN
+  FINALIZED
+  CANCELED
+}
+
+enum PlanMemberRole {
+  OWNER
+  MEMBER
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String            @id @default(uuid()) @db.Uuid
+  email        String            @unique
+  passwordHash String
+  name         String?
+  role         UserRole          @default(USER)
+
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  plansCreated Plan[]            @relation("PlansCreated")
+  memberships  PlanMember[]
+  optionsMade  PlanOption[]      @relation("OptionsCreatedBy")
+  votes        PlanOptionVote[]
+}
+
+model Plan {
+  id          String       @id @default(uuid()) @db.Uuid
+  title       String       @db.VarChar(120)
+  description String?
+  status      PlanStatus   @default(OPEN)
+  eventAt     DateTime?
+
+  createdById String       @db.Uuid
+  createdBy   User         @relation("PlansCreated", fields: [createdById], references: [id], onDelete: Restrict)
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  members     PlanMember[]
+  options     PlanOption[]
+
+  @@index([createdById])
+}
+
+model PlanMember {
+  planId   String          @db.Uuid
+  userId   String          @db.Uuid
+  role     PlanMemberRole  @default(MEMBER)
+  joinedAt DateTime        @default(now())
+
+  plan     Plan            @relation(fields: [planId], references: [id], onDelete: Cascade)
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([planId, userId])
+  @@index([userId])
+}
+
+model PlanOption {
+  id          String          @id @default(uuid()) @db.Uuid
+  planId      String          @db.Uuid
+  text        String          @db.VarChar(200)
+  details     String?
+
+  createdById String?         @db.Uuid
+  createdBy   User?           @relation("OptionsCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+
+  plan        Plan            @relation(fields: [planId], references: [id], onDelete: Cascade)
+  votes       PlanOptionVote[]
+
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([planId])
+  @@index([createdById])
+}
+
+model PlanOptionVote {
+  optionId  String     @db.Uuid
+  userId    String     @db.Uuid
+  createdAt DateTime   @default(now())
+
+  option    PlanOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([optionId, userId])
+  @@index([userId])
 }

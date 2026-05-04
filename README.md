@@ -2,7 +2,7 @@
 
 ## Introducción
 
-Bienvenido al repositorio del backend. Este proyecto está construido con **Node.js, Express, Sequelize y PostgreSQL**.
+Bienvenido al repositorio del backend. Este proyecto está construido con **Nest.js, jwt, bcrypt, prisma y PostgreSQL**.
 
 Sigue estos pasos estrictamente para instalar las dependencias y levantar el servidor en tu máquina local.
 
