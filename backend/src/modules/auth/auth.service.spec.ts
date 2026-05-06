@@ -40,6 +40,7 @@ describe('AuthService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+<<<<<<< HEAD
 
   it('registers a user and returns an access token', async () => {
     const createdUser = buildUser();
@@ -89,3 +90,6 @@ function buildUser(overrides: Partial<Parameters<typeof User.create>[0]> = {}) {
     updatedAt: overrides.updatedAt,
   });
 }
+=======
+});
+>>>>>>> origin/feature/plan-management

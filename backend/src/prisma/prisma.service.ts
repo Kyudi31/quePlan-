@@ -9,7 +9,7 @@ export class PrismaService
   async onModuleInit() {
     try {
       await this.$connect();
-      console.log('[Prisma] Connected to DB');
+      console.log('[Prisma] Connected to DB successfully');
     } catch (error) {
       console.error('[Prisma] Connection error', error);
       throw error;
