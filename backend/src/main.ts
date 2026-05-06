@@ -2,7 +2,6 @@ import './config/env.loader';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
